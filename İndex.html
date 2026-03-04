@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Atölye Uygulamaları 2 - Sosyal Medya Oyunu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .box {
+            background: white;
+            width: 420px;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 { font-size: 20px; margin-bottom: 5px; }
+        h2 { font-size: 16px; color: #555; margin-bottom: 20px; }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 6px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover { background: #2980b9; }
+        .score { margin-top: 15px; font-weight: bold; }
+        .info { margin-top: 10px; color: #2c3e50; }
+        .footer { margin-top: 20px; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h1>ATÖLYE UYGULAMALARI 2</h1>
+    <h2>Sosyal Medya: Gelişen Bir Sektör</h2>
+
+    <p id="question"></p>
+
+    <button id="a" onclick="answer(0)"></button>
+    <button id="b" onclick="answer(1)"></button>
+    <button id="c" onclick="answer(2)"></button>
+
+    <div class="info" id="info"></div>
+    <div class="score" id="score">Puan: 0</div>
+
+    <div class="footer">
+        Ömer Talha Köstek<br>230803039
+    </div>
+</div>
+
+<script>
+let score = 0;
+let current = 0;
+
+const questions = [
+ {q:"Sosyal medya neden gelişen bir sektördür?",
+  o:["Teknoloji ve kullanıcı alışkanlıkları değiştiği için","Sadece eğlence amaçlı olduğu için","Basılı medya ile ilgisi olmadığı için"],
+  c:0, i:"Sosyal medya teknolojiyle birlikte sürekli değişir."},
+
+ {q:"İçerik üreticileri neden önemlidir?",
+  o:["Marka ve hedef kitle arasında bağ kurarlar","Sadece video izlerler","Algoritmaları yönetirler"],
+  c:0, i:"İçerik üreticileri güven ve etkileşim sağlar."},
+
+ {q:"Sosyal medya en çok hangi alanı etkilemiştir?",
+  o:["İletişim ve pazarlama","Sadece oyun sektörü","Sadece bireysel kullanım"],
+  c:0, i:"İletişim sektörü doğrudan etkilenmiştir."},
+
+ {q:"Algoritmaların temel amacı nedir?",
+  o:["Her içeriği eşit göstermek","Kullanıcıya ilgisini çekebilecek içerikleri sunmak","Sadece reklam göstermek"],
+  c:1, i:"Algoritmalar kullanıcı deneyimini artırmayı hedefler."},
+
+ {q:"Etkileşim neyi ifade eder?",
+  o:["Beğeni, yorum ve paylaşımı","Sadece takipçi sayısını","Sadece izlenmeyi"],
+  c:0, i:"Etkileşim, kullanıcı katılımını gösterir."},
+
+ {q:"Sosyal medya krizleri neden hızlı yayılır?",
+  o:["Anlık paylaşım nedeniyle","Sadece ünlüler yüzünden","Yavaş iletişim olduğu için"],
+  c:0, i:"Anlık paylaşımlar krizleri hızlandırır."},
+
+ {q:"Güvenilir içerik neden önemlidir?",
+  o:["Takipçi sadakati için","Sadece algoritma için","Sadece reklam için"],
+  c:0, i:"Güven, sürdürülebilir iletişimin temelidir."},
+
+ {q:"Dijital medya hangi özelliğiyle öne çıkar?",
+  o:["Etkileşimli olması","Tek yönlü iletişim","Yavaş yayılması"],
+  c:0, i:"Dijital medya çift yönlüdür."},
+
+ {q:"Sosyal medyada kişisel marka ne demektir?",
+  o:["Bireyin dijital kimliği","Sadece logo kullanımı","Reklam bütçesi"],
+  c:0, i:"Kişisel marka güven ve algı oluşturur."},
+
+ {q:"Hashtag kullanımının amacı nedir?",
+  o:["İçeriğin keşfedilmesini sağlamak","Sadece süslemek","Algoritmayı kapatmak"],
+  c:0, i:"Hashtag erişimi artırır."},
+
+ {q:"Sosyal medya ölçümlemesi neden yapılır?",
+  o:["Performansı analiz etmek","Takipçi gizlemek","Sadece rapor doldurmak"],
+  c:0, i:"Analiz, stratejiyi geliştirir."},
+
+ {q:"Hedef kitle nedir?",
+  o:["İçeriğin ulaşmak istediği grup","Herkes","Sadece gençler"],
+  c:0, i:"Doğru hedef kitle başarıyı artırır."},
+
+ {q:"Sosyal medya neden kariyer fırsatı sunar?",
+  o:["Yeni meslek alanları oluşturduğu için","Sadece eğlence sunduğu için","Geçici olduğu için"],
+  c:0, i:"Dijital meslekler artmaktadır."},
+
+ {q:"İçerik planlaması neden önemlidir?",
+  o:["Süreklilik sağlamak için","Rastgele paylaşmak için","Sadece algoritma için"],
+  c:0, i:"Planlı içerik başarı getirir."},
+
+ {q:"Sosyal medya gelecekte nasıl olacak?",
+  o:["Daha etkileşimli ve veri odaklı","Tamamen yok olacak","Sadece yazıdan oluşacak"],
+  c:0, i:"Teknolojiyle birlikte gelişmeye devam edecek."}
+];
+
+function loadQuestion() {
+    if (current >= questions.length) {
+        document.getElementById("question").innerText =
+        "🎉 Oyun Bitti! Toplam Puan: " + score + " / 150";
+        document.getElementById("a").style.display="none";
+        document.getElementById("b").style.display="none";
+        document.getElementById("c").style.display="none";
+        return;
+    }
+    document.getElementById("question").innerText = questions[current].q;
+    document.getElementById("a").innerText = questions[current].o[0];
+    document.getElementById("b").innerText = questions[current].o[1];
+    document.getElementById("c").innerText = questions[current].o[2];
+    document.getElementById("info").innerText = "";
+}
+
+function answer(choice) {
+    if (choice === questions[current].c) {
+        score += 10;
+        document.getElementById("info").innerText =
+        "✔ Doğru! " + questions[current].i;
+    } else {
+        document.getElementById("info").innerText =
+        "✘ Yanlış. " + questions[current].i;
+    }
+    document.getElementById("score").innerText = "Puan: " + score;
+    current++;
+    setTimeout(loadQuestion, 1200);
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
